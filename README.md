@@ -62,5 +62,9 @@ A modern, high-precision OCR (Optical Character Recognition) application leverag
 
 Feel free to fork this project and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
-## 📄 License
-[MIT](https://choosealicense.com/licenses/mit/)
+## 👤 Author
+
+**Ankush Gupta**  
+*Full Stack Developer & AI Engineer*
+
+Feel free to connect or reach out for collaborations!
