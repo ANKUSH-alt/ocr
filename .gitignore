@@ -1,0 +1,23 @@
+# Virtual environments
+venv/
+env/
+.venv/
+.env
+
+# Python compilation files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Model files
+trocr-iam-model/
+*.pt
+*.pth
+*.bin
+*.ckpt
+*.onnx
+
+# OS files
+.DS_Store
+Thumbs.db
