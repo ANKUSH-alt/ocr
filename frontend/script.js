@@ -138,19 +138,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isHttps = window.location.protocol === 'https:';
                 
                 if (isHttps) {
-                    errorMessage = "🔒 **Security Block (Mixed Content)**: You are using HTTPS but trying to connect to an HTTP backend. Browsers block this for security. \n\n" +
-                                   "To fix this: \n" +
-                                   "1. Open the site via HTTP (e.g. http://localhost:5500) \n" +
-                                   "2. Or provide a public HTTPS backend URL (e.g. from ngrok)";
+                    errorMessage = `
+                        <div class="security-warning">
+                            <i data-lucide="shield-alert"></i>
+                            <strong>🔒 Security Block (Mixed Content)</strong>
+                            <p>You are using HTTPS (Vercel) but calling an HTTP backend. Browsers block this for security.</p>
+                            <div class="quick-fix">
+                                <p>Paste your Secure Tunnel URL below:</p>
+                                <div class="input-row">
+                                    <input type="text" id="quickApiUrl" placeholder="https://...trycloudflare.com" class="mini-input">
+                                    <button id="applyQuickUrl" class="mini-btn">Connect</button>
+                                </div>
+                                <p class="help-text">Or test on <strong><a href="http://localhost:5500" target="_blank">http://localhost:5500</a></strong></p>
+                            </div>
+                        </div>
+                    `;
                 } else {
-                    errorMessage = "📡 **Backend Unreachable**: Failed to connect to the OCR backend. \n\n" +
-                                   "Please ensure the server is running on your machine. \n\n" +
-                                   "💡 Tip: If you're on a different device, set your API URL in the browser console: \n" +
-                                   "`localStorage.setItem('API_BASE_URL', 'http://YOUR_MAC_IP:8000')` then refresh.";
+                    errorMessage = `
+                        <div class="connection-warning">
+                            <i data-lucide="wifi-off"></i>
+                            <strong>📡 Backend Unreachable</strong>
+                            <p>Failed to connect to the OCR backend. Ensure the server is running.</p>
+                            <div class="quick-fix">
+                                <button id="retryLocal" class="mini-btn">Retry Local (127.0.0.1)</button>
+                            </div>
+                        </div>
+                    `;
                 }
             }
             
-            showError(errorMessage);
+            showError(errorMessage, true); // true indicates it has HTML
         } finally {
             extractBtn.disabled = false;
         }
@@ -184,10 +201,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    function showError(message) {
-        errorBox.textContent = message;
+    function showError(message, isHtml = false) {
+        if (isHtml) {
+            errorBox.innerHTML = message;
+        } else {
+            errorBox.textContent = message;
+        }
+        
         errorBox.classList.remove('hidden');
         extractedText.classList.add('hidden');
+        lucide.createIcons();
+        
+        // Setup Quick Connect listeners if they exist
+        const applyBtn = document.getElementById('applyQuickUrl');
+        const quickInput = document.getElementById('quickApiUrl');
+        const retryBtn = document.getElementById('retryLocal');
+
+        if (applyBtn && quickInput) {
+            applyBtn.addEventListener('click', () => {
+                const url = quickInput.value.trim();
+                if (url) {
+                    localStorage.setItem('API_BASE_URL', url);
+                    showToast('Applying Secure URL...', 'shield-check');
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            });
+        }
+        
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => {
+                localStorage.setItem('API_BASE_URL', 'http://127.0.0.1:8000');
+                window.location.reload();
+            });
+        }
     }
 
     function hideError() {
