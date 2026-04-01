@@ -13,13 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const extractedText = document.getElementById('extractedText');
     const errorBox = document.getElementById('errorBox');
     const copyBtn = document.getElementById('copyBtn');
-
-    // Settings elements
-    const settingsBtn = document.getElementById('settingsBtn');
-    const modalOverlay = document.getElementById('modalOverlay');
-    const closeModal = document.getElementById('closeModal');
-    const apiUrlInput = document.getElementById('apiUrlInput');
-    const saveSettings = document.getElementById('saveSettings');
     const toastContainer = document.getElementById('toastContainer');
 
     let currentFile = null;
@@ -160,31 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showError(errorMessage);
         } finally {
             extractBtn.disabled = false;
-        }
-    });
-
-    // --- Settings Logic ---
-    settingsBtn.addEventListener('click', () => {
-        apiUrlInput.value = localStorage.getItem('API_BASE_URL') || 'http://127.0.0.1:8000';
-        modalOverlay.classList.add('active');
-    });
-
-    closeModal.addEventListener('click', () => {
-        modalOverlay.classList.remove('active');
-    });
-
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-            modalOverlay.classList.remove('active');
-        }
-    });
-
-    saveSettings.addEventListener('click', () => {
-        const newUrl = apiUrlInput.value.trim();
-        if (newUrl) {
-            localStorage.setItem('API_BASE_URL', newUrl);
-            showToast('Settings saved successfully!', 'check');
-            modalOverlay.classList.remove('active');
         }
     });
 
