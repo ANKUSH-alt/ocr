@@ -15,11 +15,18 @@ app = FastAPI(title="TrOCR Inference API")
 # Setup CORS for frontend to allow local requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "*",
+        "https://ocr-3hishvovx-ankush-alts-projects.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "model_loaded": model is not None}
 
 # Go up one directory from 'backend' to reach the workspace root where the model folder is
 WORKSPACE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

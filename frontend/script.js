@@ -96,8 +96,20 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('file', currentFile);
 
         try {
-            // Send request to our FastAPI backend
-            const response = await fetch('http://localhost:8000/predict', {
+            // Priority 1: Use window.API_BASE_URL if set (e.g., via script tag or console)
+            // Priority 2: Use localStorage.getItem('API_BASE_URL') for persistent testing
+            // Priority 3: Use local IP for local network testing (if on local network)
+            // Priority 4: Default to 127.0.0.1:8000
+            
+            const savedUrl = localStorage.getItem('API_BASE_URL');
+            const defaultUrl = 'http://127.0.0.1:8000';
+            const apiBase = window.API_BASE_URL || savedUrl || defaultUrl;
+            
+            const API_URL = `${apiBase}/predict`;
+            
+            console.log(`📡 Connecting to OCR backend at: ${API_URL}`);
+            
+            const response = await fetch(API_URL, {
                 method: 'POST',
                 body: formData
             });
@@ -117,7 +129,27 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('OCR Error:', error);
             loader.classList.add('hidden');
-            showError(error.message || 'An error occurred during text extraction.');
+            
+            let errorMessage = error.message || 'An error occurred during text extraction.';
+            
+            // Check if it's a typical connection error
+            if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                const isHttps = window.location.protocol === 'https:';
+                
+                if (isHttps) {
+                    errorMessage = "🔒 **Security Block (Mixed Content)**: You are using HTTPS but trying to connect to an HTTP backend. Browsers block this for security. \n\n" +
+                                   "To fix this: \n" +
+                                   "1. Open the site via HTTP (e.g. http://localhost:5500) \n" +
+                                   "2. Or provide a public HTTPS backend URL (e.g. from ngrok)";
+                } else {
+                    errorMessage = "📡 **Backend Unreachable**: Failed to connect to the OCR backend. \n\n" +
+                                   "Please ensure the server is running on your machine. \n\n" +
+                                   "💡 Tip: If you're on a different device, set your API URL in the browser console: \n" +
+                                   "`localStorage.setItem('API_BASE_URL', 'http://YOUR_MAC_IP:8000')` then refresh.";
+                }
+            }
+            
+            showError(errorMessage);
         } finally {
             extractBtn.disabled = false;
         }

@@ -21,3 +21,4 @@ trocr-iam-model/
 # OS files
 .DS_Store
 Thumbs.db
+.vercel

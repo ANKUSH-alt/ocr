@@ -1,0 +1,8 @@
+# Ignore the model directory to speed up Vercel builds
+trocr-iam-model/
+venv/
+backend/
+.env
+.DS_Store
+*.pt
+*.bin
