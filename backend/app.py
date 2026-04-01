@@ -28,9 +28,11 @@ app.add_middleware(
 async def health_check():
     return {"status": "ok", "model_loaded": model is not None}
 
-# Go up one directory from 'backend' to reach the workspace root where the model folder is
-WORKSPACE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_DIR = os.path.join(WORKSPACE_DIR, "trocr-iam-model")
+# Check for model in current root (Docker) or parent root (Local)
+MODEL_DIR = os.path.join(os.getcwd(), "trocr-iam-model")
+if not os.path.exists(MODEL_DIR):
+    WORKSPACE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MODEL_DIR = os.path.join(WORKSPACE_DIR, "trocr-iam-model")
 
 print(f"Loading model from: {MODEL_DIR}")
 

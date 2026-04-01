@@ -13,6 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const extractedText = document.getElementById('extractedText');
     const errorBox = document.getElementById('errorBox');
     const copyBtn = document.getElementById('copyBtn');
+
+    // --- Configuration & Auto-Discovery ---
+    // If you have a permanent deployment (e.g. Hugging Face), paste it here:
+    const STATIC_API_URL = ''; 
+    
+    // Priority 1: Hardcoded STATIC_API_URL
+    // Priority 2: window.API_BASE_URL (set via config.js skip pasting)
+    // Priority 3: localStorage (Pasted URL)
+    // Priority 4: Default 127.0.0.1
     const toastContainer = document.getElementById('toastContainer');
 
     let currentFile = null;
@@ -97,16 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('file', currentFile);
 
         try {
-            // Priority 1: Use window.API_BASE_URL if set (e.g., via script tag or console)
-            // Priority 2: Use localStorage.getItem('API_BASE_URL') for persistent testing
-            // Priority 3: Use local IP for local network testing (if on local network)
-            // Priority 4: Default to 127.0.0.1:8000
-            
+            // Priority Logic
             const savedUrl = localStorage.getItem('API_BASE_URL');
             const defaultUrl = 'http://127.0.0.1:8000';
-            const apiBase = window.API_BASE_URL || savedUrl || defaultUrl;
+            const apiBase = STATIC_API_URL || window.API_BASE_URL || savedUrl || defaultUrl;
             
-            const API_URL = `${apiBase}/predict`;
+            const API_URL = apiBase.endsWith('/predict') ? apiBase : `${apiBase}/predict`;
             
             console.log(`📡 Connecting to OCR backend at: ${API_URL}`);
             
