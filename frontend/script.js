@@ -14,6 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorBox = document.getElementById('errorBox');
     const copyBtn = document.getElementById('copyBtn');
 
+    // Settings elements
+    const settingsBtn = document.getElementById('settingsBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeModal = document.getElementById('closeModal');
+    const apiUrlInput = document.getElementById('apiUrlInput');
+    const saveSettings = document.getElementById('saveSettings');
+    const toastContainer = document.getElementById('toastContainer');
+
     let currentFile = null;
 
     // --- Drag and Drop Logic ---
@@ -155,25 +163,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Settings Logic ---
+    settingsBtn.addEventListener('click', () => {
+        apiUrlInput.value = localStorage.getItem('API_BASE_URL') || 'http://127.0.0.1:8000';
+        modalOverlay.classList.add('active');
+    });
+
+    closeModal.addEventListener('click', () => {
+        modalOverlay.classList.remove('active');
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.classList.remove('active');
+        }
+    });
+
+    saveSettings.addEventListener('click', () => {
+        const newUrl = apiUrlInput.value.trim();
+        if (newUrl) {
+            localStorage.setItem('API_BASE_URL', newUrl);
+            showToast('Settings saved successfully!', 'check');
+            modalOverlay.classList.remove('active');
+        }
+    });
+
     // --- Utilities ---
     copyBtn.addEventListener('click', () => {
         if (!extractedText.value) return;
         
         navigator.clipboard.writeText(extractedText.value).then(() => {
-            const icon = copyBtn.querySelector('i');
-            // Swap icon to check temporarily
-            const oldIcon = icon.getAttribute('data-lucide');
-            icon.setAttribute('data-lucide', 'check');
-            lucide.createIcons();
-            
-            setTimeout(() => {
-                icon.setAttribute('data-lucide', oldIcon);
-                lucide.createIcons();
-            }, 2000);
+            showToast('Text copied to clipboard!');
         }).catch(err => {
             console.error('Failed to copy', err);
         });
     });
+
+    function showToast(message, iconName = 'copy') {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <i data-lucide="${iconName}"></i>
+            <span>${message}</span>
+        `;
+        toastContainer.appendChild(toast);
+        lucide.createIcons();
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(10px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
 
     function showError(message) {
         errorBox.textContent = message;

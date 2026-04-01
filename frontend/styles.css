@@ -1,16 +1,18 @@
 :root {
-    --bg-primary: #0a0a0f;
-    --card-bg: rgba(25, 25, 35, 0.6);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --primary: #8b5cf6;
-    --primary-hover: #7c3aed;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --error: #ef4444;
-    --success: #22c55e;
+    --accent-hsl: 258, 85%, 65%;
+    --bg-primary: hsl(240, 20%, 6%);
+    --card-bg: hsla(240, 15%, 12%, 0.7);
+    --border-color: hsla(0, 0%, 100%, 0.1);
+    --primary: hsl(var(--accent-hsl));
+    --primary-hover: hsl(258, 90%, 70%);
+    --text-primary: hsl(210, 40%, 98%);
+    --text-secondary: hsl(215, 25%, 70%);
+    --error: hsl(0, 85%, 65%);
+    --success: hsl(142, 70%, 55%);
     
-    --glow-1: rgba(139, 92, 246, 0.4);
-    --glow-2: rgba(236, 72, 153, 0.4);
+    --glow-1: hsla(var(--accent-hsl), 0.35);
+    --glow-2: hsla(330, 85%, 65%, 0.35);
+    --shadow-premium: 0 20px 40px -10px hsla(0, 0%, 0%, 0.6);
 }
 
 * {
